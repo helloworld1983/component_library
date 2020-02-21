@@ -166,17 +166,16 @@ entity spi_commands is
   command_width_bits_g 	  : natural 	:= 1;
   address_width_bits_g 	  : natural 	:= 1;
   data_width_bits_g 	    : natural 	:= 8;
-  output_bits_g           : natural   := 24;
+  output_bits_g           : natural   := 10;
   cpol_cpha             	: std_logic_vector(1 downto 0) := "00"
 );
 	port(
       clk	            :in	std_logic;	
 		  rst_n 	        :in	std_logic;
       
-      command_in      : in  std_logic_vector(command_width_bits_g*8-1 downto 0);
-      address_in      : in  std_logic_vector(address_width_bits_g*8-1 downto 0);
-      address_en_in   : in  std_logic;
-		data_length_in  : in  std_logic_vector(data_width_bits_g - 1 downto 0);
+      command_in      : in  std_logic_vector(command_width_bits_g-1 downto 0);
+      address_in      : in  std_logic_vector(address_width_bits_g-1 downto 0);
+      
       master_slave_data_in      :in   std_logic_vector(data_width_bits_g-1 downto 0);
       master_slave_data_rdy_in  :in   std_logic;
       master_slave_data_ack_out :out  std_logic;
@@ -247,8 +246,8 @@ end component;
                                     to_natural(address_used_g) * address_width_bits_g + 
                                     data_width_bits_g;
                     
-  signal command_signal : std_logic_vector(command_width_bits_g*8-1 downto 0);
-  signal address_signal : std_logic_vector(address_width_bits_g*8-1 downto 0);
+  signal command_signal : std_logic_vector(command_width_bits_g-1 downto 0);
+  signal address_signal : std_logic_vector(address_width_bits_g-1 downto 0);
 
   signal data_signal :std_logic_vector(data_width_bits_g-1 downto 0);  
 
@@ -260,9 +259,9 @@ end component;
   signal miso_data_valid_spi : std_logic;
   --Do not assign reset signals to signals which serve only as
   --mapping. They should be reset only at the most base entity. 
-   
-  signal miso_data_spi : std_logic_vector(output_bits_g-1 downto 0); ---xfer_len-1
-  signal mosi_data_spi : std_logic_vector(output_bits_g-1 downto 0); ---xfer_len-1
+  
+  signal miso_data_spi : std_logic_vector(xfer_len-1 downto 0);
+  signal mosi_data_spi : std_logic_vector(xfer_len-1 downto 0);
     
   --Signals used to only relay slave_master_data_ack's related to the 
   --data payload.
